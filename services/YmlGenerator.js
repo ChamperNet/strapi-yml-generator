@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import {v4 as uuidv4} from 'uuid';
 import xmlbuilder from 'xmlbuilder';
-import {ensureExists} from '../plugins/file';
+import {ensureExists} from '../plugins/file.js';
 
 export default class YmlGenerator {
   constructor(products, outputFilePath, config = {}) {
