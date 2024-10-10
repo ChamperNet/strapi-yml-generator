@@ -52,7 +52,7 @@ program
   .description('Initialize the YML generator configuration')
   .action(async () => {
     const cwd = process.cwd();
-    const feedsDir = path.resolve(cwd, 'feeds');
+    const feedsDir = path.resolve(cwd, 'public/uploads/feeds');
     const templateEnvPath = path.resolve(__dirname, 'template.env');
     const destinationEnvPath = path.resolve(cwd, '.env');
     const ecosystemTemplate = path.resolve(__dirname, 'ecosystem.config.js');
@@ -73,7 +73,7 @@ program
 backups
 backups/errors.log
 backups/output.log
-feeds
+public/feeds
 /*.log
 .idea
 node_modules
@@ -101,7 +101,7 @@ program
         categoryName: process.env.CATEGORY_NAME || "Автотовары",
       };
 
-      const outputFilePath = process.env.YML_FILE_PATH || './feeds/yandex_market.yml';
+      const outputFilePath = process.env.YML_FILE_PATH || './public/uploads/feeds/yandex_market.yml';
       const ymlGenerator = new YmlGenerator(products, outputFilePath, config);
 
       const ymlContent = ymlGenerator.generateYml();

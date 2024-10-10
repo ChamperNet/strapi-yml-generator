@@ -8,7 +8,7 @@ const YmlGenerator = require("./services/YmlGenerator");
 const YandexController = require("./controllers/YandexController");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3030;
 
 // Настройка middlewares
 app.use(bodyParser.json());

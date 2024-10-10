@@ -1,7 +1,7 @@
 backups
 backups/errors.log
 backups/output.log
-feeds
+public/feeds
 /*.log
 .idea
 node_modules
