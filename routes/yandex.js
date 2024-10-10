@@ -1,13 +1,24 @@
 const { Router } = require("express");
-const yandexController = require("../controllers/yandexController");
+const YandexController = require("../controllers/YandexController");
 
 const app = Router();
 
-app.post("/yandex/yml-generate", (req, res) =>
-  yandexController.generateYml(req, res)
-);
+// Создаем экземпляр контроллера
+const yandexController = new YandexController();
+
+// POST-запрос для генерации YML
+app.post("/yandex/yml-generate", async (req, res) => {
+  try {
+    await yandexController.generateYml(req, res);
+  } catch (error) {
+    console.error("Error processing YML generation:", error);
+    res.status(500).send("An error occurred during YML generation.");
+  }
+});
+
+// Защита GET-запроса
 app.get("/yandex/yml-generate", (req, res) => {
-  res.send("Yandex: XML creating is not allowed on GET-request");
+  res.status(405).send("YML creation is not allowed on GET-request");
 });
 
 module.exports = app;

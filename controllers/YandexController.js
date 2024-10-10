@@ -11,13 +11,23 @@ class YandexController {
 
   async generateYml(req, res) {
     try {
+      // Получаем список товаров
       const products = await this.productService.fetchProducts();
       this.ymlGenerator.products = products; // Обновляем список продуктов в генераторе
+
+      // Генерируем YML файл
       const ymlContent = this.ymlGenerator.generateYml();
-      this.ymlGenerator.saveYmlFile(ymlContent);
+
+      // Сохраняем YML файл асинхронно
+      await this.ymlGenerator.saveYmlFile(ymlContent);
+
       res.status(200).send("YML file generated successfully.");
     } catch (error) {
       console.error("Error generating YML file:", error);
+
+      // Уведомление об ошибке (например, через email или другие системы уведомлений)
+      // notifyError(error); // реализация уведомления
+
       res.status(500).send("Error generating YML file.");
     }
   }

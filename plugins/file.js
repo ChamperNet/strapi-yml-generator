@@ -1,18 +1,14 @@
-const fs = require("fs");
+const fs = require("fs").promises;
 
-function ensureExists(path, mask, cb) {
-  if (typeof mask == "function") {
-    // Allow the `mask` parameter to be optional
-    cb = mask;
-    mask = 0o744;
+async function ensureExists(path, mask = 0o744) {
+  try {
+    await fs.mkdir(path, {mode: mask, recursive: true});
+    console.log(`Directory '${path}' created or already exists.`);
+  } catch (err) {
+    if (err.code !== "EEXIST") {
+      throw new Error(`Error creating directory '${path}': ${err.message}`);
+    }
   }
-  fs.mkdir(path, mask, function (err) {
-    if (err) {
-      if (err.code === "EEXIST")
-        cb(null); // Ignore the error if the folder already exists
-      else cb(err); // Something else went wrong
-    } else cb(null); // Successfully created folder
-  });
 }
 
-module.exports = { ensureExists };
+module.exports = {ensureExists};

@@ -1,62 +1,61 @@
-/*
- * Timur Iskakov (champer.ru)
- * Copyright (c) 2024.
- */
-const { ensureExists } = require("../plugins/file");
-const { v4: uuidv4 } = require("uuid");
+const fs = require("fs").promises;
+const {ensureExists} = require("../plugins/file");
+const {v4: uuidv4} = require("uuid");
+const xmlbuilder = require("xmlbuilder");
 
 class YmlGenerator {
-  constructor(products, outputFilePath) {
+  constructor(products, outputFilePath, config = {}) {
     this.products = products;
     this.outputFilePath = outputFilePath;
+    this.shopName = config.shopName || "Your Shop Name";
+    this.companyName = config.companyName || "Your Company Name";
+    this.shopUrl = config.shopUrl || "https://your-shop-url.com";
+    this.currency = config.currency || "RUB";
+    this.categoryId = config.categoryId || 1;
+    this.categoryName = config.categoryName || "Автотовары";
   }
 
   generateYml() {
     const root = xmlbuilder
-      .create("yml_catalog", { encoding: "UTF-8" })
+      .create("yml_catalog", {encoding: "UTF-8"})
       .att("date", new Date().toISOString());
 
     const shop = root.ele("shop");
-    shop.ele("name", {}, "Your Shop Name");
-    shop.ele("company", {}, "Your Company Name");
-    shop.ele("url", {}, "https://your-shop-url.com");
+    shop.ele("name", {}, this.shopName);
+    shop.ele("company", {}, this.companyName);
+    shop.ele("url", {}, this.shopUrl);
 
     const currencies = shop.ele("currencies");
-    currencies.ele("currency", { id: "RUB", rate: 1 });
+    currencies.ele("currency", {id: this.currency, rate: 1});
 
     const categories = shop.ele("categories");
-    categories.ele("category", { id: 1 }, "Автотовары");
+    categories.ele("category", {id: this.categoryId}, this.categoryName);
 
     const offers = shop.ele("offers");
 
     this.products.forEach((product) => {
-      const offer = offers.ele("offer", { id: uuidv4(), available: true });
-      offer.ele(
-        "url",
-        {},
-        `https://your-shop-url.com/products/${product.slug}`
-      );
+      const offer = offers.ele("offer", {id: uuidv4(), available: true});
+      offer.ele("url", {}, `${this.shopUrl}/products/${product.slug}`);
       offer.ele("price", {}, product.price);
-      offer.ele("currencyId", {}, "RUB");
-      offer.ele("categoryId", {}, 1);
+      offer.ele("currencyId", {}, this.currency);
+      offer.ele("categoryId", {}, this.categoryId);
       offer.ele("name", {}, product.name);
       offer.ele("description", {}, product.description);
       offer.ele("vendor", {}, product.vendor);
     });
 
-    return root.end({ pretty: true });
+    return root.end({pretty: true});
   }
 
-  saveYmlFile(content) {
-    ensureExists(this.outputFilePath, (err) => {
-      if (err) {
-        console.error("Failed to create folder:", err);
-        return res.status(500).send("Error creating folder.");
-      }
-
-      fs.writeFileSync(this.outputFilePath, content, "utf8");
+  async saveYmlFile(content) {
+    try {
+      await ensureExists(this.outputFilePath); // Убедимся, что путь существует
+      await fs.writeFile(this.outputFilePath, content, "utf8");
       console.log("YML file saved to", this.outputFilePath);
-    });
+    } catch (err) {
+      console.error("Failed to save YML file:", err);
+      throw new Error("Error saving YML file.");
+    }
   }
 }
 
