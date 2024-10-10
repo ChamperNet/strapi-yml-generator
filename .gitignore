@@ -1,7 +1,9 @@
 backups
 backups/errors.log
 backups/output.log
+feeds
 /*.log
 .idea
 node_modules
 .env
+/package-lock.json

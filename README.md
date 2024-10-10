@@ -1,37 +1,31 @@
-# strapi-db-sqlite-cloud-backup
+# strapi-yml-generator
 
-Script for scheduled backup to Yandex Drive or Google Drive of a temporary copy of the Strapi SQLite database.
+Script for ...
 
 ## Installation
 
 To use this package, you need to install it in your project:
 
 ```sh
-npm install strapi-db-sqlite-cloud-backup
+npm install strapi-yml-generator
 ```
 
 ## Initialization
 
-First, you need to initialize the backup configuration by creating a .env file with the necessary environment variables.
-You can do this using the init command provided by the package:
+First, you need to initialize ...
 
 ```sh
-npx strapi-db-sqlite-cloud-backup init
+npx strapi-yml-generator init
 ```
 
 This will create a `.env` file in the root of your project. Fill in the required values:
 
 ```dotenv
-GOOGLE_DRIVE_FOLDER_ID=your-google-drive-folder-id
-GOOGLE_CREDENTIALS_PATH=./path/to/google-credentials.json
-GOOGLE_DRIVE_ENABLED=false
-
 YANDEX_TOKEN=your-yandex-o-auth-token
-YANDEX_DISK_ENABLED=true
-YANDEX_BACKUP_PATH=/backups
 
 DB_PATH=../backend/.tmp
 DB_NAME=data.db
+FEED_PATH=../backend/public/upload/feeds
 ```
 
 This will also create an `ecosystem.config.js` file and fill it with that:
@@ -41,7 +35,7 @@ module.exports = {
   apps: [
     {
       name: 'backup',
-      script: 'node_modules/strapi-db-sqlite-cloud-backup/backup.js',
+      script: 'node_modules/strapi-yml-generator/server.js',
       args: 'run',
       cron_restart: '0 */3 * * *', // Run every 3 hours
       watch: false,
@@ -54,15 +48,15 @@ module.exports = {
 
 ```
 
-Change the backup timeout value if needed.
+Change the generation timeout value if needed.
 
 ## Usage
-To run the backup script manually, use the `run` command:
+To run the generator script manually, use the `run` command:
 
 ```sh
-npx strapi-db-sqlite-cloud-backup run
+npx strapi-yml-generator run
 ```
-This command will perform a one-time backup of the database according to the steps outlined below.
+This command will perform a one-time ...
 
 ## Workflow
 

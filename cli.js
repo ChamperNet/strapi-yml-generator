@@ -1,11 +1,9 @@
 #!/usr/bin/env node
 
-import { Command } from 'commander'
+import {Command} from 'commander'
 import fs from 'fs'
 import path from 'path'
-import { fileURLToPath } from 'url'
-import { config } from 'dotenv'
-import { backupDatabase } from './backup.js'
+import {fileURLToPath} from 'url'
 
 // Получаем путь к текущему файлу и директории
 const __filename = fileURLToPath(import.meta.url)
@@ -16,10 +14,10 @@ program.version('1.0.0')
 
 program
   .command('init')
-  .description('Initialize the backup configuration')
+  .description('Initialize the YML generator configuration')
   .action(() => {
     const cwd = process.cwd()
-    const backupDir = path.resolve(cwd, 'backups')
+    const feedsDir = path.resolve(cwd, 'feeds')
 
     const templateEnvPath = path.resolve(__dirname, 'template.env')
     const destinationEnvPath = path.resolve(cwd, '.env')
@@ -30,7 +28,7 @@ program
     const gitignoreTemplate = path.resolve(__dirname, '.gitignore')
     const gitignorePath = path.resolve(cwd, '.gitignore')
 
-    // Create .env file
+    // Create file .env
     if (!fs.existsSync(destinationEnvPath)) {
       fs.copyFileSync(templateEnvPath, destinationEnvPath)
       console.log('.env file has been created. Please fill in the required values.')
@@ -39,11 +37,11 @@ program
     }
 
     // Ensure the backups directory exists
-    if (!fs.existsSync(backupDir)) {
-      fs.mkdirSync(backupDir, { recursive: true })
-      console.log('Backups directory has been created.')
+    if (!fs.existsSync(feedsDir)) {
+      fs.mkdirSync(feedsDir, {recursive: true})
+      console.log('Feeds directory has been created.')
     } else {
-      console.log('Backups directory already exists.')
+      console.log('Feeds directory already exists.')
     }
 
     // Create ecosystem.config.js
@@ -60,26 +58,18 @@ program
 backups
 backups/errors.log
 backups/output.log
+feeds
 /*.log
 .idea
 node_modules
 .env
+/package-lock.json
       `
       fs.writeFileSync(gitignorePath, gitignoreContent.trim())
       console.log('.gitignore file has been created.')
     } else {
       console.log('.gitignore file already exists.')
     }
-  })
-
-program
-  .command('run')
-  .description('Run the backup script')
-  .action(() => {
-    console.log('Running the backup script...')
-    const cwd = process.cwd()
-    config({ path: path.resolve(cwd, '.env') }) // Load .env variables from the current working directory
-    backupDatabase() // Run backup
   })
 
 program.parse(process.argv)
