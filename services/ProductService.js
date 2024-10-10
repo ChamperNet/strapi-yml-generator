@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-class ProductService {
+export default class ProductService {
   constructor(apiUrl) {
     this.apiUrl = apiUrl;
     this.cache = null;
@@ -37,5 +37,3 @@ class ProductService {
     }
   }
 }
-
-module.exports = ProductService;

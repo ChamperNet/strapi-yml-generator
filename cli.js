@@ -16,7 +16,7 @@ const __dirname = path.dirname(__filename);
 dotenv.config({path: path.resolve(process.cwd(), '.env')});
 
 const program = new Command();
-program.version('1.0.0');
+program.version('0.2.2');
 
 // Вспомогательная функция для создания файла
 async function createFileIfNotExists(templatePath, destinationPath, content = null) {

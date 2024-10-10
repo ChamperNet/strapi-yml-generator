@@ -3,7 +3,7 @@ const {ensureExists} = require("../plugins/file");
 const {v4: uuidv4} = require("uuid");
 const xmlbuilder = require("xmlbuilder");
 
-class YmlGenerator {
+export default class YmlGenerator {
   constructor(products, outputFilePath, config = {}) {
     this.products = products;
     this.outputFilePath = outputFilePath;
@@ -58,5 +58,3 @@ class YmlGenerator {
     }
   }
 }
-
-module.exports = YmlGenerator;
