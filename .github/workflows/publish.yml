@@ -1,0 +1,41 @@
+name: Publish to npm
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Install dependencies 🔧
+        run: npm install
+
+      # Uncomment the following step if you add tests to your project
+      # - name: Run tests
+      #   run: npm test
+
+      - name: Configure git
+        run: |
+          git config --global user.email "info@champer.ru"
+          git config --global user.name "Timur Iskakov"
+
+      - name: Configure npm for authentication
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPMJS_PUBLICATION_TOKEN }}" > ~/.npmrc
+
+      - name: Publish package to NPM 📦
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_PUBLICATION_TOKEN }}
+        run: |
+          npm publish --access public
