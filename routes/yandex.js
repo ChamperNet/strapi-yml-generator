@@ -1,5 +1,5 @@
-const { Router } = require("express");
-const YandexController = require("../controllers/YandexController");
+import {Router} from 'express';
+import yandexController from '../controllers/yandexController.js';
 
 const app = Router();
 

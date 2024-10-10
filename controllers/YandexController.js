@@ -3,7 +3,7 @@
  * Copyright (c) 2024.
  */
 
-class YandexController {
+export default class YandexController {
   constructor(productService, ymlGenerator) {
     this.productService = productService;
     this.ymlGenerator = ymlGenerator;
@@ -32,5 +32,3 @@ class YandexController {
     }
   }
 }
-
-module.exports = YandexController;

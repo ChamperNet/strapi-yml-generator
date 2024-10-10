@@ -1,11 +1,10 @@
-require("dotenv").config();
-const express = require("express");
-const cors = require("cors");
-const bodyParser = require("body-parser");
-
-const ProductService = require("./services/ProductService");
-const YmlGenerator = require("./services/YmlGenerator");
-const YandexController = require("./controllers/YandexController");
+import 'dotenv/config';
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import ProductService from './services/ProductService.js';
+import YmlGenerator from './services/YmlGenerator.js';
+import YandexController from './controllers/YandexController.js';
 
 const app = express();
 const PORT = process.env.PORT || 3030;

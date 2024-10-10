@@ -1,6 +1,6 @@
-const fs = require("fs").promises;
+import fs from 'fs';
 
-async function ensureExists(path, mask = 0o744) {
+export async function ensureExists(path, mask = 0o744) {
   try {
     await fs.mkdir(path, {mode: mask, recursive: true});
     console.log(`Directory '${path}' created or already exists.`);
@@ -10,5 +10,3 @@ async function ensureExists(path, mask = 0o744) {
     }
   }
 }
-
-module.exports = {ensureExists};

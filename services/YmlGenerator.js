@@ -1,7 +1,8 @@
-const fs = require("fs").promises;
-const {ensureExists} = require("../plugins/file");
-const {v4: uuidv4} = require("uuid");
-const xmlbuilder = require("xmlbuilder");
+import fs from 'fs';
+import path from 'path';
+import {v4 as uuidv4} from 'uuid';
+import xmlbuilder from 'xmlbuilder';
+import {ensureExists} from '../plugins/file';
 
 export default class YmlGenerator {
   constructor(products, outputFilePath, config = {}) {
