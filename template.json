@@ -1,0 +1,25 @@
+{
+  "fields": null,
+  "populate": [
+    "picture",
+    "gallery",
+    "categories"
+  ],
+  "feed": "common",
+  "mapping": {
+    "id": "id",
+    "available": "${attributes.active}",
+    "url": "/catalog/${attributes.slug}",
+    "price": "${attributes.price}",
+    "categoryId": "${attributes.categories.data?.[0].id}",
+    "categoryName": "${attributes.categories.data?.[0].name}",
+    "name": "${attributes.name}",
+    "description": "${attributes.description}",
+    "manufacturerWarranty": "true",
+    "picture": "${attributes.picture?.data?.attributes?.url}",
+    "gallery": "gallery",
+    "length": "${attributes.length}",
+    "width": "${attributes.width}",
+    "height": "${attributes.height}"
+  }
+}

@@ -60,6 +60,8 @@ program
     const ecosystemTemplate = path.resolve(__dirname, 'ecosystem.config.js');
     const ecosystemPath = path.resolve(cwd, 'ecosystem.config.js');
     const gitignorePath = path.resolve(cwd, '.gitignore');
+    const configPathTemplate = path.resolve(cwd, 'template.json');
+    const configPath = path.resolve(cwd, 'config.json');
 
     // Создаем .env файл
     await createFileIfNotExists(templateEnvPath, destinationEnvPath);
@@ -83,6 +85,12 @@ node_modules
 /package-lock.json
     `;
     await createFileIfNotExists(null, gitignorePath, gitignoreContent);
+
+    // Создаем файл config.json
+    const configContent = await fs.readFile(configPathTemplate, 'utf8');
+
+    await createFileIfNotExists(null, configPath, configContent);
+
   });
 
 // Команда run для разовой генерации YML файла
