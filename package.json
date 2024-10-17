@@ -1,6 +1,6 @@
 {
   "name": "strapi-yml-generator",
-  "version": "0.2.4",
+  "version": "0.3.1",
   "description": "Script for generation YML/XML feed for the Strapi",
   "type": "module",
   "main": "server.js",

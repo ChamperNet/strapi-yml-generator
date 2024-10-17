@@ -14,8 +14,8 @@ module.exports = {
   apps: [
     {
       name: 'yml-generator', // Название процесса
-      script: path.resolve(__dirname, 'node_modules/strapi-yml-generator/server.js'),
-      args: 'run',
+      script: path.resolve(__dirname, 'node_modules/strapi-yml-generator/cli.js'), // Путь к вашему CLI
+      args: 'run', // Аргумент для запуска команды run
       cron_restart: '0 */6 * * *', // Перезапуск каждые 6 часов
       watch: false, // Не отслеживать изменения файлов
       autorestart: true, // Автоматический перезапуск при сбоях

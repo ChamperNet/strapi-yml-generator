@@ -45,7 +45,7 @@ const config = {
   categoryId: parseInt(process.env.CATEGORY_ID, 10) || 1,
   categoryName: process.env.CATEGORY_NAME || "Автотовары",
 };
-const ymlGenerator = new YmlGenerator([], process.env.YML_FILE_PATH, config);
+const ymlGenerator = new YmlGenerator([], config);
 const yandexController = new YandexController(productService, ymlGenerator);
 
 // Маршрут для генерации YML по POST-запросу

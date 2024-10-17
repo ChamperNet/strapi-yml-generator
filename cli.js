@@ -16,7 +16,7 @@ const __dirname = path.dirname(__filename);
 dotenv.config({path: path.resolve(process.cwd(), '.env')});
 
 const program = new Command();
-program.version('0.2.2');
+program.version('0.3.1');
 
 // Вспомогательная функция для создания файла
 async function createFileIfNotExists(templatePath, destinationPath, content = null) {
@@ -52,7 +52,9 @@ program
   .description('Initialize the YML generator configuration')
   .action(async () => {
     const cwd = process.cwd();
-    const feedsDir = path.resolve(cwd, 'public/uploads/feeds');
+    const feedsDir = path.isAbsolute(process.env.YML_FILE_DIR)
+      ? process.env.YML_FILE_DIR
+      : path.resolve(cwd, process.env.YML_FILE_DIR || 'public/uploads/feeds');
     const templateEnvPath = path.resolve(__dirname, 'template.env');
     const destinationEnvPath = path.resolve(cwd, '.env');
     const ecosystemTemplate = path.resolve(__dirname, 'ecosystem.config.js');
@@ -73,7 +75,7 @@ program
 backups
 backups/errors.log
 backups/output.log
-public/feeds
+public/uploads/feeds
 /*.log
 .idea
 node_modules
@@ -89,9 +91,18 @@ program
   .description('Run the YML generator once')
   .action(async () => {
     try {
-      const productService = new ProductService(process.env.STRAPI_API_URL);
-      const products = await productService.fetchProducts();
+      const cwd = process.cwd();
+      const configPath = path.join(cwd, 'config.json');
 
+      // Чтение config.json асинхронно
+      const data = await fs.readFile(configPath, 'utf8');
+      const query = JSON.parse(data);
+
+      // Инициализация сервисов
+      const productService = new ProductService(process.env.STRAPI_API_URL);
+      const products = await productService.fetchAllProducts(10, query.fields, query.populate);
+
+      // Конфигурация YML генератора
       const config = {
         shopName: process.env.SHOP_NAME || "Your Shop Name",
         companyName: process.env.COMPANY_NAME || "Your Company Name",
@@ -101,10 +112,11 @@ program
         categoryName: process.env.CATEGORY_NAME || "Автотовары",
       };
 
-      const outputFilePath = process.env.YML_FILE_PATH || './public/uploads/feeds/yandex_market.yml';
-      const ymlGenerator = new YmlGenerator(products, outputFilePath, config);
+      // Генерация YML файла
+      const ymlGenerator = new YmlGenerator(products, config);
+      const ymlContent = ymlGenerator.generateYml(query);
 
-      const ymlContent = ymlGenerator.generateYml();
+      // Сохранение YML файла
       await ymlGenerator.saveYmlFile(ymlContent);
       console.log('YML file has been generated successfully.');
     } catch (error) {
