@@ -68,10 +68,21 @@ function splitIntoBatches(arr, batchSize) {
 
 // Функция для удаления пустых тегов из XML
 function removeEmptyTags(xml) {
-  // Удаляем пустые теги и любые пробелы или переходы строк между ними
+  // Список тегов, которые не должны быть удалены, даже если они пустые
+  const tagsToKeep = ['currency'];
+
+  // Регулярное выражение для удаления пустых парных и одиночных тегов
   return xml
-    .replace(/<[^\/>][^>]*>\s*<\/[^>]+>|<[^\/>][^>]*\/>/g, '')  // Удаление пустых тегов
-    .replace(/\n\s*\n/g, '\n');  // Удаление лишних переходов строк и пробелов
+    .replace(/<(\w+)([^>]*)>\s*<\/\1>/g, (match, tagName) => {
+      // Если тег в списке исключений, мы его оставляем
+      return tagsToKeep.includes(tagName) ? match : '';
+    })
+    .replace(/<(\w+)([^>]*)\/>/g, (match, tagName) => {
+      // Если одиночный тег в списке исключений, оставляем его
+      return tagsToKeep.includes(tagName) ? match : '';
+    })
+    // Удаляем лишние переходы строк
+    .replace(/\n\s*\n/g, '\n');
 }
 
 export default class YmlGenerator {
