@@ -16,7 +16,7 @@ const __dirname = path.dirname(__filename);
 dotenv.config({path: path.resolve(process.cwd(), '.env')});
 
 const program = new Command();
-program.version('0.3.1');
+program.version('0.3.5');
 
 // Вспомогательная функция для создания файла
 async function createFileIfNotExists(templatePath, destinationPath, content = null) {
@@ -57,14 +57,17 @@ program
       : path.resolve(cwd, process.env.YML_FILE_DIR || 'public/uploads/feeds');
     const templateEnvPath = path.resolve(__dirname, 'template.env');
     const destinationEnvPath = path.resolve(cwd, '.env');
+    const configPathTemplate = path.resolve(__dirname, 'template.json');
+    const configPath = path.resolve(cwd, 'config.json');
     const ecosystemTemplate = path.resolve(__dirname, 'ecosystem.config.js');
     const ecosystemPath = path.resolve(cwd, 'ecosystem.config.js');
     const gitignorePath = path.resolve(cwd, '.gitignore');
-    const configPathTemplate = path.resolve(cwd, 'template.json');
-    const configPath = path.resolve(cwd, 'config.json');
 
     // Создаем .env файл
     await createFileIfNotExists(templateEnvPath, destinationEnvPath);
+
+    // Создаем файл config.json
+    await createFileIfNotExists(configPathTemplate, configPath);
 
     // Создаем директорию feeds
     await createDirectoryIfNotExists(feedsDir);
@@ -85,10 +88,6 @@ node_modules
 /package-lock.json
     `;
     await createFileIfNotExists(null, gitignorePath, gitignoreContent);
-
-    // Создаем файл config.json
-    await createFileIfNotExists(configPathTemplate, configPath);
-
   });
 
 // Команда run для разовой генерации YML файла
