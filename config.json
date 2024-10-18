@@ -54,5 +54,15 @@
     "length": "${attributes.technical?.length}",
     "width": "${attributes.technical?.width}",
     "height": "${attributes.technical?.height}"
+  },
+  "units": {
+    "mileage": "км",
+    "dimensions": "см",
+    "weight": "кг",
+    "maxLoadCapacity": "кг",
+    "enginePower": "кВт",
+    "fuelTankCapacity": "литров",
+    "horsePower": "л.с.",
+    "engineCapacity": "литров"
   }
 }

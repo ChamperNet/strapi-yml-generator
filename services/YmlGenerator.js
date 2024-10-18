@@ -85,6 +85,11 @@ function removeEmptyTags(xml) {
     .replace(/\n\s*\n/g, '\n');
 }
 
+// Функция подстановки единиц измерения
+function setUnits(value, unit) {
+  return value ? value + ' ' + unit : null;
+}
+
 export default class YmlGenerator {
   constructor(products, config = {}) {
     this.products = products;
@@ -102,7 +107,7 @@ export default class YmlGenerator {
 
   generateYml(config) {
 
-    const {feed, mapping} = config;
+    const {feed, mapping, units} = config;
 
     const root = xmlbuilder
       .create("yml_catalog", {encoding: "UTF-8"})
@@ -225,9 +230,9 @@ export default class YmlGenerator {
           offer.ele("engine_type", {}, getTranslation(engineType, 'engine_type'));
           offer.ele("transmission", {}, getTranslation(transmission, 'transmission'));
           offer.ele("drive", {}, getTranslation(drive, 'drive'));
-          offer.ele("horsepower", {}, horsePowers);
-          offer.ele("engine_capacity", {}, engineCapacity);
-          offer.ele("mileage", {}, mileage);
+          offer.ele("horsepower", {}, setUnits(horsePowers, (units?.horsePower || 'л.с.')));
+          offer.ele("engine_capacity", {}, setUnits(engineCapacity, (units?.engineCapacity || 'литров')));
+          offer.ele("mileage", {}, setUnits(mileage, (units?.mileage || 'км')));
           offer.ele("number_of_doors", {}, numberOfDoors);
           offer.ele("number_of_seats", {}, numberOfSeats);
           offer.ele("fuel_type", {}, getTranslation(fuelType, 'fuel_type'));
@@ -242,15 +247,15 @@ export default class YmlGenerator {
         if (feed === 'special-equipment') {
           // Special Equipment Fields
           offer.ele("equipment_type", {}, getTranslation(equipmentType, 'equipment_type'));
-          offer.ele("weight", {}, weight);
-          offer.ele("max_load_capacity", {}, maxLoadCapacity);
-          offer.ele("engine_power", {}, enginePower);
+          offer.ele("weight", {}, setUnits(weight, (units?.weight || 'кг')));
+          offer.ele("max_load_capacity", {}, setUnits(maxLoadCapacity, (units?.maxLoadCapacity || 'кг')));
+          offer.ele("engine_power", {}, setUnits(enginePower, (units?.enginePower || 'кВт')));
           offer.ele("engine_model", {}, engineModel);
-          offer.ele("fuel_tank_capacity", {}, fuelTankCapacity);
+          offer.ele("fuel_tank_capacity", {}, setUnits(fuelTankCapacity, (units?.fuelTankCapacity || 'литров')));
           offer.ele("operating_hours", {}, operatingHours);
 
           if (length && width && height) {
-            offer.ele("dimensions", {}, `${length}x${width}x${height}м`);
+            offer.ele("dimensions", {}, `${length}x${width}x${height} ${units?.dimensions || 'м'}`);
           }
         }
 
