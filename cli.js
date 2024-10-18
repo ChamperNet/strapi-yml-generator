@@ -87,9 +87,7 @@ node_modules
     await createFileIfNotExists(null, gitignorePath, gitignoreContent);
 
     // Создаем файл config.json
-    const configContent = await fs.readFile(configPathTemplate, 'utf8');
-
-    await createFileIfNotExists(null, configPath, configContent);
+    await createFileIfNotExists(configPathTemplate, configPath);
 
   });
 
