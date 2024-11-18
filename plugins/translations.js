@@ -7,6 +7,7 @@ const paramsTranslations = {
   number_of_doors: 'Количество дверей',
   number_of_seats: 'Количество мест',
   color: 'Цвет кузова',
+  type: 'Тип авто',
   engine_type: 'Тип двигателя',
   fuel_type: 'Тип топлива',
   transmission: 'Тип трансмиссии',

@@ -49,9 +49,7 @@ export default class YmlGenerator {
   // Метод для выполнения динамической логики
   executeDynamicLogic(expression, data) {
     try {
-      const safeExpression = expression.startsWith('data.')
-        ? expression
-        : `data.${ expression }`;
+      const safeExpression = expression.startsWith('data.') ? expression : `data.${ expression }`;
       const func = new Function('data', `return ${ safeExpression };`);
       return func(data);
     } catch (e) {
@@ -78,12 +76,8 @@ export default class YmlGenerator {
   removeEmptyTags(xml) {
     const tagsToKeep = ['currency']; // Теги, которые нужно сохранить
     return xml
-      .replace(/<(\w+)([^>]*)>\s*<\/\1>/g, (match, tagName) =>
-        tagsToKeep.includes(tagName) ? match : ''
-      )
-      .replace(/<(\w+)([^>]*)\/>/g, (match, tagName) =>
-        tagsToKeep.includes(tagName) ? match : ''
-      )
+      .replace(/<(\w+)([^>]*)>\s*<\/\1>/g, (match, tagName) => tagsToKeep.includes(tagName) ? match : '')
+      .replace(/<(\w+)([^>]*)\/>/g, (match, tagName) => tagsToKeep.includes(tagName) ? match : '')
       .replace(/\n\s*\n/g, '\n'); // Удаление лишних переходов строк
   }
 
@@ -154,11 +148,17 @@ export default class YmlGenerator {
         const countryOfOrigin = replacer(mapping.countryOfOrigin);
         const picture = replacer(mapping.picture);
         const gallery = product?.attributes?.[mapping.gallery];
-        const vendor = replacer(mapping.vendor);
-        const mark = replacer(mapping.mark);
-        const model = replacer(mapping.model);
-        const year = replacer(mapping.year);
         const type = replacer(mapping.type);
+        const vendor = replacer(mapping.vendor);
+        const model = replacer(mapping.model);
+        const weight = replacer(mapping.weight);
+        const length = replacer(mapping.length);
+        const width = replacer(mapping.width);
+        const height = replacer(mapping.height);
+
+        // params
+        const mark = replacer(mapping.mark);
+        const year = replacer(mapping.year);
         const bodyType = replacer(mapping.bodyType);
         const color = replacer(mapping.color);
         const engineType = replacer(mapping.engineType);
@@ -177,19 +177,14 @@ export default class YmlGenerator {
         const vin = replacer(mapping.vin);
         const dealer = replacer(mapping.dealer);
         const equipmentType = replacer(mapping.equipmentType);
-        const weight = replacer(mapping.weight);
         const maxLoadCapacity = replacer(mapping.maxLoadCapacity);
         const enginePower = replacer(mapping.enginePower);
         const engineModel = replacer(mapping.engineModel);
         const fuelTankCapacity = replacer(mapping.fuelTankCapacity);
         const operatingHours = replacer(mapping.operatingHours);
-        const length = replacer(mapping.length);
-        const width = replacer(mapping.width);
-        const height = replacer(mapping.height);
 
         const offer = offers.ele('offer', {
-          id: stableUUID,
-          available,
+          id: stableUUID, available,
         });
 
         offer.ele('url', {}, `${ this.shopUrl }${ productUrl }`);
@@ -221,9 +216,9 @@ export default class YmlGenerator {
         }
 
         if (feed === 'automobile' || feed === 'special-equipment') {
+          offer.ele('typePrefix', {}, getTranslation(equipmentType, 'equipment_type'));
           offer.ele('vendor', {}, vendor);
           offer.ele('model', {}, model);
-          offer.ele('typePrefix', {}, equipmentType);
 
           // Формируем params
           offer.ele('param', { name: getTranslation('year', 'params') }, year);
@@ -232,16 +227,13 @@ export default class YmlGenerator {
           offer.ele('param', { name: getTranslation('mark', 'params') }, mark);
           offer.ele('param', { name: getTranslation('mileage', 'params'), unit: units?.mileage || 'км' }, mileage);
           offer.ele('param', {
-            name: getTranslation('horse_powers', 'params'),
-            unit: units?.horsePower || 'л.с.'
+            name: getTranslation('horse_powers', 'params'), unit: units?.horsePower || 'л.с.'
           }, horsePowers);
           offer.ele('param', {
-            name: getTranslation('engine_capacity', 'params'),
-            unit: units?.engineCapacity || 'литров'
+            name: getTranslation('engine_capacity', 'params'), unit: units?.engineCapacity || 'литров'
           }, engineCapacity);
           offer.ele('param', {
-            name: getTranslation('fuel_consumption', 'params'),
-            unit: units?.fuelConsumption || 'л./100км'
+            name: getTranslation('fuel_consumption', 'params'), unit: units?.fuelConsumption || 'л./100км'
           }, fuelConsumption);
           offer.ele('param', { name: getTranslation('owner_count', 'params') }, ownerCount);
           offer.ele('param', { name: getTranslation('customs_cleared', 'params') }, customsCleared && 'Да');
@@ -254,24 +246,21 @@ export default class YmlGenerator {
           offer.ele('param', { name: getTranslation('transmission', 'params') }, getTranslation(transmission, 'transmission'));
           offer.ele('param', { name: getTranslation('condition', 'params') }, getTranslation(condition, 'condition'));
           offer.ele('param', { name: getTranslation('vin', 'params') }, vin);
-          offer.ele('dealer', { name: getTranslation('dealer', 'params') }, dealer && 'Официальный дилер');
+          offer.ele('param', { name: getTranslation('dealer', 'params') }, dealer && 'Да');
         }
 
         if (feed === 'special-equipment') {
           // Формируем params
           offer.ele('param', { name: getTranslation('equipment_type', 'params') }, getTranslation(equipmentType, 'equipment_type'));
           offer.ele('param', {
-            name: getTranslation('max_load_capacity', 'params'),
-            unit: units?.maxLoadCapacity || 'кг'
+            name: getTranslation('max_load_capacity', 'params'), unit: units?.maxLoadCapacity || 'кг'
           }, maxLoadCapacity);
           offer.ele('param', {
-            name: getTranslation('engine_power', 'params'),
-            unit: units?.enginePower || 'кВт'
+            name: getTranslation('engine_power', 'params'), unit: units?.enginePower || 'кВт'
           }, enginePower);
           offer.ele('param', { name: getTranslation('engine_model', 'params') }, engineModel);
           offer.ele('param', {
-            name: getTranslation('fuel_tank_capacity', 'params'),
-            unit: units?.fuelTankCapacity || 'литров'
+            name: getTranslation('fuel_tank_capacity', 'params'), unit: units?.fuelTankCapacity || 'литров'
           }, fuelTankCapacity);
           offer.ele('param', { name: getTranslation('operating_hours', 'params') }, operatingHours);
         }
