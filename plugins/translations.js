@@ -1,5 +1,33 @@
 // translations.js
 
+const paramsTranslations = {
+  mark: 'Марка',
+  mileage: 'Пробег',
+  horse_powers: 'Кол-во лошадиных сил',
+  number_of_doors: 'Количество дверей',
+  number_of_seats: 'Количество мест',
+  color: 'Цвет кузова',
+  engine_type: 'Тип двигателя',
+  fuel_type: 'Тип топлива',
+  transmission: 'Тип трансмиссии',
+  condition: 'Состояние',
+  year: 'Год выпуска',
+  body_type: 'Тип кузова',
+  drive: 'Коробка передач',
+  engine_capacity: 'Объем двигателя',
+  fuel_consumption: 'Расход топлива',
+  owner_count: 'Количество владельцев',
+  customs_cleared: 'Растаможен',
+  vin: 'VIN-код',
+  dealer: 'Официальный дилер',
+  equipment_type: 'Тип техники',
+  max_load_capacity: 'Максимальная загрузка',
+  engine_power: 'Мощность двигателя',
+  engine_model: 'Модель двигателя',
+  fuel_tank_capacity: 'Объем топливного бака',
+  operating_hours: 'Часы работы оператора'
+}
+
 const typeTranslations = {
   car: "Легковой автомобиль",
   truck: "Грузовой автомобиль",
@@ -247,7 +275,8 @@ export function getTranslation(value, type) {
     colors: colorsTranslations,
     fuel_type: fuelTypeTranslations,
     condition: conditionTranslations,
-    equipment_type: equipmentTypeTranslations
+    equipment_type: equipmentTypeTranslations,
+    params: paramsTranslations
   };
 
   // Получаем нужный словарь по типу

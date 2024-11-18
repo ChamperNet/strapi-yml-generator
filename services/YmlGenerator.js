@@ -1,9 +1,9 @@
 import fs from 'fs/promises';
 import path from 'path';
-import {v5 as uuidv5} from 'uuid';
+import { v5 as uuidv5 } from 'uuid';
 import xmlbuilder from 'xmlbuilder';
-import {ensureExists} from '../plugins/file.js';
-import {getTranslation} from '../plugins/translations.js';
+import { ensureExists } from '../plugins/file.js';
+import { getTranslation } from '../plugins/translations.js';
 
 const SECRET_SOL = process.env.SECRET_SOL || 'b6a9118d-d4a5-5086-91ea-07368a0ede57';
 
@@ -40,7 +40,7 @@ export default class YmlGenerator {
       try {
         return this.executeDynamicLogic(expression, data) ?? ''; // Если результат undefined, возвращаем пустую строку
       } catch (e) {
-        console.error(`Error processing expression: ${expression}`, e);
+        console.error(`Error processing expression: ${ expression }`, e);
         return ''; // Если ошибка, возвращаем пустую строку
       }
     });
@@ -51,11 +51,11 @@ export default class YmlGenerator {
     try {
       const safeExpression = expression.startsWith('data.')
         ? expression
-        : `data.${expression}`;
-      const func = new Function('data', `return ${safeExpression};`);
+        : `data.${ expression }`;
+      const func = new Function('data', `return ${ safeExpression };`);
       return func(data);
     } catch (e) {
-      console.error(`Error executing dynamic logic: ${expression}`, e);
+      console.error(`Error executing dynamic logic: ${ expression }`, e);
       return undefined;
     }
   }
@@ -89,15 +89,15 @@ export default class YmlGenerator {
 
   // Метод для подстановки единиц измерения
   setUnits(value, unit) {
-    return value ? `${value} ${unit}` : null;
+    return value ? `${ value } ${ unit }` : null;
   }
 
   // Метод для генерации YML
   generateYml(config) {
-    const {feed, mapping, units} = config;
+    const { feed, mapping, units } = config;
 
     const root = xmlbuilder
-      .create('yml_catalog', {encoding: 'UTF-8'})
+      .create('yml_catalog', { encoding: 'UTF-8' })
       .att('date', new Date().toISOString());
 
     const shop = root.ele('shop');
@@ -106,7 +106,7 @@ export default class YmlGenerator {
     shop.ele('url', {}, this.shopUrl);
 
     const currencies = shop.ele('currencies');
-    currencies.ele('currency', {id: this.currency, rate: 1});
+    currencies.ele('currency', { id: this.currency, rate: 1 });
 
     const categoriesMap = new Map();
 
@@ -128,7 +128,7 @@ export default class YmlGenerator {
     const categories = shop.ele('categories');
     categoriesMap.forEach((categoryName, categoryId) => {
       if (categoryId && categoryName) {
-        categories.ele('category', {id: categoryId}, categoryName);
+        categories.ele('category', { id: categoryId }, categoryName);
       }
     });
 
@@ -138,7 +138,7 @@ export default class YmlGenerator {
 
     // Обработка каждого батча
     for (const batch of productBatches) {
-      console.log(`Processing batch of ${batch.length} products...`);
+      console.log(`Processing batch of ${ batch.length } products...`);
       batch.forEach((product) => {
         this.processMapping(mapping, product);
         const replacer = this.createReplacer(product);
@@ -192,7 +192,7 @@ export default class YmlGenerator {
           available,
         });
 
-        offer.ele('url', {}, `${this.shopUrl}${productUrl}`);
+        offer.ele('url', {}, `${ this.shopUrl }${ productUrl }`);
         offer.ele('price', {}, price);
         offer.ele('currencyId', {}, this.currency);
         offer.ele('categoryId', {}, categoryId);
@@ -203,57 +203,82 @@ export default class YmlGenerator {
 
         // Добавляем изображения
         if (picture) {
-          offer.ele('picture', {}, `${this.mediaPath}${picture}`);
+          offer.ele('picture', {}, `${ this.mediaPath }${ picture }`);
         }
 
         if (gallery && gallery?.data?.length) {
           gallery?.data?.forEach((image) => {
-            offer.ele('picture', {}, `${this.mediaPath}${image?.attributes?.url}`);
+            offer.ele('picture', {}, `${ this.mediaPath }${ image?.attributes?.url }`);
           });
+        }
+
+        if (length && width && height) {
+          offer.ele('dimensions', {}, `${ length }/${ width }/${ height }`);
+        }
+
+        if (weight) {
+          offer.ele('weight', {}, weight);
         }
 
         if (feed === 'automobile' || feed === 'special-equipment') {
           offer.ele('vendor', {}, vendor);
-          offer.ele('mark', {}, mark);
           offer.ele('model', {}, model);
-          offer.ele('year', {}, year);
-          offer.ele('type', {}, getTranslation(type, 'types'));
-          offer.ele('body_type', {}, getTranslation(bodyType, 'body_type'));
-          offer.ele('color', {}, getTranslation(color, 'colors'));
-          offer.ele('engine_type', {}, getTranslation(engineType, 'engine_type'));
-          offer.ele('transmission', {}, getTranslation(transmission, 'transmission'));
-          offer.ele('drive', {}, getTranslation(drive, 'drive'));
-          offer.ele('horsepower', {}, this.setUnits(horsePowers, units?.horsePower || 'л.с.'));
-          offer.ele('engine_capacity', {}, this.setUnits(engineCapacity, units?.engineCapacity || 'литров'));
-          offer.ele('mileage', {}, this.setUnits(mileage, units?.mileage || 'км'));
-          offer.ele('number_of_doors', {}, numberOfDoors);
-          offer.ele('number_of_seats', {}, numberOfSeats);
-          offer.ele('fuel_type', {}, getTranslation(fuelType, 'fuel_type'));
-          offer.ele('fuel_consumption', {}, fuelConsumption);
-          offer.ele('condition', {}, getTranslation(condition, 'condition'));
-          offer.ele('owner_count', {}, ownerCount);
-          offer.ele('customs_cleared', {}, customsCleared && 'Да');
-          offer.ele('vin', {}, vin);
-          offer.ele('dealer', {}, dealer && 'Официальный дилер');
+          offer.ele('typePrefix', {}, equipmentType);
+
+          // Формируем params
+          offer.ele('param', { name: getTranslation('year', 'params') }, year);
+          offer.ele('param', { name: getTranslation('drive', 'params') }, getTranslation(drive, 'drive'));
+          offer.ele('param', { name: getTranslation('body_type', 'params') }, getTranslation(bodyType, 'body_type'));
+          offer.ele('param', { name: getTranslation('mark', 'params') }, mark);
+          offer.ele('param', { name: getTranslation('mileage', 'params'), unit: units?.mileage || 'км' }, mileage);
+          offer.ele('param', {
+            name: getTranslation('horse_powers', 'params'),
+            unit: units?.horsePower || 'л.с.'
+          }, horsePowers);
+          offer.ele('param', {
+            name: getTranslation('engine_capacity', 'params'),
+            unit: units?.engineCapacity || 'литров'
+          }, engineCapacity);
+          offer.ele('param', {
+            name: getTranslation('fuel_consumption', 'params'),
+            unit: units?.fuelConsumption || 'л./100км'
+          }, fuelConsumption);
+          offer.ele('param', { name: getTranslation('owner_count', 'params') }, ownerCount);
+          offer.ele('param', { name: getTranslation('customs_cleared', 'params') }, customsCleared && 'Да');
+          offer.ele('param', { name: getTranslation('number_of_doors', 'params') }, numberOfDoors);
+          offer.ele('param', { name: getTranslation('number_of_seats', 'params') }, numberOfSeats);
+          offer.ele('param', { name: getTranslation('color', 'params') }, getTranslation(color, 'colors'));
+          offer.ele('param', { name: getTranslation('type', 'params') }, getTranslation(type, 'types'));
+          offer.ele('param', { name: getTranslation('engine_type', 'params') }, getTranslation(engineType, 'engine_type'));
+          offer.ele('param', { name: getTranslation('fuel_type', 'params') }, getTranslation(fuelType, 'fuel_type'));
+          offer.ele('param', { name: getTranslation('transmission', 'params') }, getTranslation(transmission, 'transmission'));
+          offer.ele('param', { name: getTranslation('condition', 'params') }, getTranslation(condition, 'condition'));
+          offer.ele('param', { name: getTranslation('vin', 'params') }, vin);
+          offer.ele('dealer', { name: getTranslation('dealer', 'params') }, dealer && 'Официальный дилер');
         }
 
         if (feed === 'special-equipment') {
-          offer.ele('equipment_type', {}, getTranslation(equipmentType, 'equipment_type'));
-          offer.ele('weight', {}, this.setUnits(weight, units?.weight || 'кг'));
-          offer.ele('max_load_capacity', {}, this.setUnits(maxLoadCapacity, units?.maxLoadCapacity || 'кг'));
-          offer.ele('engine_power', {}, this.setUnits(enginePower, units?.enginePower || 'кВт'));
-          offer.ele('engine_model', {}, engineModel);
-          offer.ele('fuel_tank_capacity', {}, this.setUnits(fuelTankCapacity, units?.fuelTankCapacity || 'литров'));
-          offer.ele('operating_hours', {}, operatingHours);
-
-          if (length && width && height) {
-            offer.ele('dimensions', {}, `${length}x${width}x${height} ${units?.dimensions || 'м'}`);
-          }
+          // Формируем params
+          offer.ele('param', { name: getTranslation('equipment_type', 'params') }, getTranslation(equipmentType, 'equipment_type'));
+          offer.ele('param', {
+            name: getTranslation('max_load_capacity', 'params'),
+            unit: units?.maxLoadCapacity || 'кг'
+          }, maxLoadCapacity);
+          offer.ele('param', {
+            name: getTranslation('engine_power', 'params'),
+            unit: units?.enginePower || 'кВт'
+          }, enginePower);
+          offer.ele('param', { name: getTranslation('engine_model', 'params') }, engineModel);
+          offer.ele('param', {
+            name: getTranslation('fuel_tank_capacity', 'params'),
+            unit: units?.fuelTankCapacity || 'литров'
+          }, fuelTankCapacity);
+          offer.ele('param', { name: getTranslation('operating_hours', 'params') }, operatingHours);
         }
       });
     }
 
-    let xmlContent = root.end({pretty: true});
+    let xmlContent = root.end({ pretty: true });
 
     xmlContent = this.removeEmptyTags(xmlContent);
 

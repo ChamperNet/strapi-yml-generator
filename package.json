@@ -1,12 +1,10 @@
 {
   "name": "strapi-yml-generator",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "description": "Script for generation YML/XML feed for the Strapi",
   "type": "module",
   "main": "server.js",
-  "bin": {
-    "strapi-yml-generator": "./cli.js"
-  },
+  "bin": "./cli.js",
   "scripts": {
     "start": "node server.js",
     "generate:run": "node server.js run"

@@ -63,6 +63,7 @@
     "enginePower": "кВт",
     "fuelTankCapacity": "литров",
     "horsePower": "л.с.",
-    "engineCapacity": "литров"
+    "engineCapacity": "литров",
+    "fuelConsumption": "л./100км"
   }
 }
